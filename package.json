@@ -17,11 +17,11 @@
     "@hapi/joi": "17.1.1"
   },
   "peerDependencies": {
-    "@aws-sdk/client-dynamodb": "3.17.x"
+    "@aws-sdk/client-dynamodb": ">=3.17.0 <4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/trilogy-group/dynamodb-lock-client-v3.git"
+    "url": "https://github.com/EdiaLearning/dynamodb-lock-client-v3.git"
   },
   "keywords": [
     "dynamodb",
