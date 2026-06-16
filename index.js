@@ -7,6 +7,13 @@ const os = require("os");
 const pkg = require("./package.json");
 const util = require("util");
 
+const dynamodbRequest = function(dynamodb, method, params, callback)
+{
+    dynamodb[method](params)
+        .then(data => callback(null, data))
+        .catch(error => callback(error));
+};
+
 const FailClosed = function(config)
 {
     if(!(this instanceof FailClosed))
@@ -83,7 +90,7 @@ FailClosed.prototype.acquireLock = function(id, callback)
             {
                 params.Item[self._config.sortKey] = { S: dataBag.sortID };
             }
-            self._config.dynamodb.putItem(params, (error, data) =>
+            dynamodbRequest(self._config.dynamodb, "putItem", params, (error, data) =>
                 {
                     if (error)
                     {
@@ -235,7 +242,7 @@ FailOpen.prototype.acquireLock = function(id, callback)
             {
                 params.Key[self._config.sortKey] = { S: dataBag.sortID };
             }
-            self._config.dynamodb.getItem(params, (error, data) =>
+            dynamodbRequest(self._config.dynamodb, "getItem", params, (error, data) =>
                 {
                     if (error)
                     {
@@ -292,7 +299,7 @@ FailOpen.prototype.acquireLock = function(id, callback)
             {
                 params.Item[self._config.sortKey] = { S: dataBag.sortID };
             }
-            self._config.dynamodb.putItem(params, (error, data) =>
+            dynamodbRequest(self._config.dynamodb, "putItem", params, (error, data) =>
                 {
                     if (error)
                     {
@@ -347,7 +354,7 @@ FailOpen.prototype.acquireLock = function(id, callback)
             {
                 params.Item[self._config.sortKey] = { S: dataBag.sortID };
             }
-            self._config.dynamodb.putItem(params, (error, data) =>
+            dynamodbRequest(self._config.dynamodb, "putItem", params, (error, data) =>
                 {
                     if (error)
                     {
@@ -442,7 +449,7 @@ const Lock = function(config)
             {
                 params.Item[self._config.sortKey] = { S: self._config.sortID };
             }
-            self._config.dynamodb.putItem(params, (error, data) =>
+            dynamodbRequest(self._config.dynamodb, "putItem", params, (error, data) =>
                 {
                     if (error)
                     {
@@ -502,7 +509,7 @@ Lock.prototype._releaseFailClosed = function(callback)
     {
         params.Key[self._config.sortKey] = { S: self._config.sortID };
     }
-    self._config.dynamodb.deleteItem(params, (error, data) =>
+    dynamodbRequest(self._config.dynamodb, "deleteItem", params, (error, data) =>
         {
             if (error && error.code === "ConditionalCheckFailedException")
             {
@@ -545,7 +552,7 @@ Lock.prototype._releaseFailOpen = function(callback)
     {
         params.Item[self._config.sortKey] = { S: self._config.sortID };
     }
-    self._config.dynamodb.putItem(params, (error, data) =>
+    dynamodbRequest(self._config.dynamodb, "putItem", params, (error, data) =>
         {
             if (error && error.code === "ConditionalCheckFailedException")
             {
