@@ -14,7 +14,7 @@
     "jest": "26.0.1"
   },
   "dependencies": {
-    "joi": "17.1.1"
+    "joi": "18.2.9"
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": ">=3.17.0 <4"
